@@ -58,7 +58,7 @@ df = df.assign(ageplus1=lambda l_df: l_df.age + 1)
 
 # %%
 #' Je sais supprimer la colonne que je viens de créer
-df = df.drop("ageplus1", axis=1, inplace=True)
+df = df.drop("ageplus1", axis=1)
 
 # %%
 #' Je sais assigner de deux façons une nouvelle colonne à la dataframe avec des surnoms :
@@ -66,7 +66,7 @@ df = df.drop("ageplus1", axis=1, inplace=True)
 
 nicknames = ["Louis", "Jack", "Felix", "Croquette", "Alfred", "Sifflet", "Piou"]
 df["nickname"] = nicknames
-df.drop("nickname", axis=1, inplace=True)
+df = df.drop("nickname", axis=1)
 df.insert(2, "nickname", nicknames)
 
 # %%
@@ -74,6 +74,7 @@ df.insert(2, "nickname", nicknames)
 #' de chiens et d'oiseaux)
 
 df.animal.value_counts()
+
 # %%
 #' Je sais supprimer une ligne
 
@@ -96,11 +97,10 @@ df.insert(
     "timestamp",
     timestamps,
 )
-df["date"] = pd.to_datetime(df["timestamp"])
 df = df.assign(date=lambda l_df: pd.to_datetime(l_df.timestamp, unit="s"))
 
 # We drop the column before doing the same thing with assign
-df.drop(columns=["date", "timestamp"], axis=1, inplace=True)
+df = df.drop(columns=["date", "timestamp"], axis=1)
 
 df = df.assign(timestamp=timestamps).assign(
     date=lambda l_df: pd.to_datetime(l_df.timestamp, unit="s")
@@ -108,6 +108,7 @@ df = df.assign(timestamp=timestamps).assign(
 
 # %%
 # Je sais filtrer de trois façons sur des timestamps
+
 
 print(df[(df["date"] > "2018-04-22 06:52:10") & (df["date"] < "2018-04-23 22:00:00")])
 print(df[df["date"] == "2018-04-22 06:52:20"])
@@ -123,7 +124,7 @@ df = df.rename(columns={"date": "date_renamed"})
 
 # %%
 #' Je sais repérer et retirer des duplicats d'une dataframe tout en gardant l'index (et sans le reset)
-df.drop_duplicates()
+df = df.drop_duplicates()
 
 # ##' Transform values 101
 
