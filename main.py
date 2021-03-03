@@ -22,6 +22,7 @@
 #'
 #' Utiliser l'alias `pd` pour désigner pandas, et `np` pour désigner numpy.
 
+#%%
 import pandas as pd
 import numpy as np
 
@@ -53,24 +54,26 @@ df.loc[lambda df: df.age == 2]
 df["ageplus1"] = df["age"] + 1
 
 #' ou
-df = df.assign(ageplus1=lambda df: df.age + 1)
+df = df.assign(ageplus1=lambda l_df: l_df.age + 1)
 
 # %%
 #' Je sais supprimer la colonne que je viens de créer
-# TODO
+df = df.drop("ageplus1", axis=1, inplace=True)
 
 # %%
 #' Je sais assigner de deux façons une nouvelle colonne à la dataframe avec des surnoms :
 #' `['Louis', 'Jack', 'Felix', 'Croquette', 'Alfred', 'Sifflet', 'Piou']`
 
-# TODO
+nicknames = ["Louis", "Jack", "Felix", "Croquette", "Alfred", "Sifflet", "Piou"]
+df["nickname"] = nicknames
+df.drop("nickname", axis=1, inplace=True)
+df.insert(2, "nickname", nicknames)
 
 # %%
 #' Je sais compter le nombre d'éléments de chaque classe (récupérer le nombre de chats,
 #' de chiens et d'oiseaux)
 
-# TODO
-
+df.animal.value_counts()
 # %%
 #' Je sais supprimer une ligne
 
@@ -85,27 +88,42 @@ df = df.reset_index()
 #'
 #' exemple de timestamp : `[1524379940,1524379910,1524379230,1524379420,1524349940,1524379440]`
 
-# TODO
+
+# With the insert method
+timestamps = [1524379940, 1524379910, 1524379230, 1524379420, 1524349940, 1524379441]
+df.insert(
+    4,
+    "timestamp",
+    timestamps,
+)
+df["date"] = pd.to_datetime(df["timestamp"])
+df = df.assign(date=lambda l_df: pd.to_datetime(l_df.timestamp, unit="s"))
+
+# We drop the column before doing the same thing with assign
+df.drop(columns=["date", "timestamp"], axis=1, inplace=True)
+
+df = df.assign(timestamp=timestamps).assign(
+    date=lambda l_df: pd.to_datetime(l_df.timestamp, unit="s")
+)
 
 # %%
-#' Je sais filtrer de trois façons sur des timestamp
+# Je sais filtrer de trois façons sur des timestamps
 
-# TODO
+print(df[(df["date"] > "2018-04-22 06:52:10") & (df["date"] < "2018-04-23 22:00:00")])
+print(df[df["date"] == "2018-04-22 06:52:20"])
 
 # %%
 #' Je sais retirer des lignes où des valeurs `NA` apparaissent tout en gardant l'index (et sans le reset)
-
-# TODO
+df = df.dropna()
 
 # %%
 #' Je sais renommer une colonne
 
-# TODO
+df = df.rename(columns={"date": "date_renamed"})
 
 # %%
 #' Je sais repérer et retirer des duplicats d'une dataframe tout en gardant l'index (et sans le reset)
-
-# TODO
+df.drop_duplicates()
 
 # ##' Transform values 101
 
@@ -126,27 +144,31 @@ def split_str(s):
         return s
 
 
-# TODO
+df["surname_splitted"] = df.nickname.map(split_str)
 
 # %%
 #' Je sais utiliser la colonne créée pour créer un nouveau dataframe (`df_surname`) qui contient
 #' deux colonnes distinctes : `prefix_surname`, `suffix_surname`.
 #'
 #' J'ai compris qu'une ligne d'un dataframe à plus d'une colonne est un simple objet Series.
-
-# TODO
-
+# df_surname["prefix_surname"] = df.surname.map(lambda x: x[0])
+# df_surname["suffix_surname"] = df.surname.map(lambda x: x[1])
+df_surname = (
+    pd.DataFrame()
+    .assign(prefix_surname=df.surname_splitted.map(lambda x: x[0]))
+    .assign(suffix_surname=df.surname_splitted.map(lambda x: x[1]))
+)
 # %%
 #' Remplacer la colonne `surname_splitted` de l'objet `df` par ces deux colonnes
-
-# TODO
+pd.concat([df, df_surname], axis=1)
+df.drop("surname_splitted", axis=1)
 
 # %%
 #' Pour chaque type d'animal je sais donner le surnom du plus vieux.
 #'
 #' Hint : utiliser `loc` et `idxmax`
 
-# TODO
+df.loc[df.groupby("animal").apply(lambda g: g.age.idxmax())].nickname
 
 # %%
 #' Je sais concaténer deux dataframes, sans oublier de reset l'index et n'avoir
@@ -163,7 +185,7 @@ df2 = pd.DataFrame(
     {"age": [4, 2, 6, 1, 5], "animal": ["cat", "dog", "bird", "cat", "bird"]}
 )
 
-# TODO
+df3 = pd.concat([df1, df2], ignore_index=True)
 
 # %%
 # ###' Bravo !
@@ -192,4 +214,7 @@ df2 = pd.DataFrame(
 #' ```
 #'
 
-# todo
+x = np.zeros((8, 8), dtype=int)
+x[1::2, ::2] = 1
+x[::2, 1::2] = 1
+print(x)
