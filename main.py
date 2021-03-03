@@ -1,0 +1,195 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+# # Formation pandas
+#'
+#' Ce notebook permet de s'assurer que tu maitrises un minimum Pandas
+#'
+#' Tout d'abord lis https://towardsdatascience.com/pandas-dataframe-a-lightweight-intro-680e3a212b96
+#' pour comprendre ce qu'est un `dataframe` (et la différence avec les `series`).
+#' Garde aussi cette cheat sheet à porté de main : https://pandas.pydata.org/Pandas_Cheat_Sheet.pdf
+#'
+#' Tu devrais pouvoir jouer ce Notebook cellule par cellule avec le raccourci Ctrl+Enter. Cela te permet
+#' de dérouler efficacement ce notebook, étape par étape.
+#' Enfin, n'oublie pas d'utiliser les raccourcis de ton IDE et l'auto-complétion !
+
+#' --------------------------------------------------------------------------
+
+# ## Premier setup
+#'
+#' - Importer pandas (et l'installer s'il n'est pas présent : `pip install pandas`).
+#' - Importer numpy (et l'installer s'il n'est pas présent : `pip install numpy`).
+#'
+#' Utiliser l'alias `pd` pour désigner pandas, et `np` pour désigner numpy.
+
+import pandas as pd
+import numpy as np
+
+
+# %%
+#' Initialiser un premier dataframe
+
+df = pd.DataFrame(
+    {
+        "age": [5, 2, 6, 8, 2, 4, np.NaN],
+        "animal": ["cat", "dog", "cat", "cat", "dog", "bird", "bird"],
+    }
+)
+
+# ## Play with data 101
+
+#' Je sais récupérer les animaux qui ont exactement 2 ans (filtrage)
+df[df["age"] == 2]
+
+#' ou :
+df.query("age == 2")
+
+#' mais il préférable d'utiliser `loc` pour éviter de faire des eval de string
+df.loc[lambda df: df.age == 2]
+
+# %%
+#' Je sais effectuer une opération sur une nouvelle colonne et incrémenter
+#' l'age de tous les animaux de 1
+df["ageplus1"] = df["age"] + 1
+
+#' ou
+df = df.assign(ageplus1=lambda df: df.age + 1)
+
+# %%
+#' Je sais supprimer la colonne que je viens de créer
+# TODO
+
+# %%
+#' Je sais assigner de deux façons une nouvelle colonne à la dataframe avec des surnoms :
+#' `['Louis', 'Jack', 'Felix', 'Croquette', 'Alfred', 'Sifflet', 'Piou']`
+
+# TODO
+
+# %%
+#' Je sais compter le nombre d'éléments de chaque classe (récupérer le nombre de chats,
+#' de chiens et d'oiseaux)
+
+# TODO
+
+# %%
+#' Je sais supprimer une ligne
+
+df = df.drop(2)
+
+# %%
+#' Je sais remettre à jour l'index suite à cette suppression
+
+df = df.reset_index()
+
+#' Je sais utiliser insert et df.assign pour ajouter des timestamp (`dtype='datetime64[s]'`) au dataframe.
+#'
+#' exemple de timestamp : `[1524379940,1524379910,1524379230,1524379420,1524349940,1524379440]`
+
+# TODO
+
+# %%
+#' Je sais filtrer de trois façons sur des timestamp
+
+# TODO
+
+# %%
+#' Je sais retirer des lignes où des valeurs `NA` apparaissent tout en gardant l'index (et sans le reset)
+
+# TODO
+
+# %%
+#' Je sais renommer une colonne
+
+# TODO
+
+# %%
+#' Je sais repérer et retirer des duplicats d'une dataframe tout en gardant l'index (et sans le reset)
+
+# TODO
+
+# ##' Transform values 101
+
+# %%
+#' Je sais couper un mot en deux (`Jack` -> `['Ja','ck']`) dans une partie d'un dataframe.
+#'
+#' Je sais créer une nouvelle colonne `surname` pour stocker ce nouveau résultat.
+#'
+#' Hint :
+#  - comprendre la différence entre `map`, `applymap` et `apply` :
+#' https://www.geeksforgeeks.org/difference-between-map-applymap-and-apply-methods-in-pandas/
+
+
+def split_str(s):
+    if type(s) is str:
+        return [s[: len(s) // 2], s[len(s) // 2 :]]
+    else:
+        return s
+
+
+# TODO
+
+# %%
+#' Je sais utiliser la colonne créée pour créer un nouveau dataframe (`df_surname`) qui contient
+#' deux colonnes distinctes : `prefix_surname`, `suffix_surname`.
+#'
+#' J'ai compris qu'une ligne d'un dataframe à plus d'une colonne est un simple objet Series.
+
+# TODO
+
+# %%
+#' Remplacer la colonne `surname_splitted` de l'objet `df` par ces deux colonnes
+
+# TODO
+
+# %%
+#' Pour chaque type d'animal je sais donner le surnom du plus vieux.
+#'
+#' Hint : utiliser `loc` et `idxmax`
+
+# TODO
+
+# %%
+#' Je sais concaténer deux dataframes, sans oublier de reset l'index et n'avoir
+#' que les deux colonnes qui m'intéressent. Je fait tout cela en une ligne.
+
+df1 = pd.DataFrame(
+    {
+        "age": [5, 2, 6, 8, 2, 4, np.NaN],
+        "animal": ["cat", "dog", "cat", "cat", "dog", "bird", "bird"],
+    }
+)
+
+df2 = pd.DataFrame(
+    {"age": [4, 2, 6, 1, 5], "animal": ["cat", "dog", "bird", "cat", "bird"]}
+)
+
+# TODO
+
+# %%
+# ###' Bravo !
+#'
+#' Tu as finis ce notebook, il te reste encore plein de petits détails à comprendre
+#' mais tu as pu commencer à te familiariser avec les dataframes !
+#'
+#' Envoie ce notebook à ton coach pour qu'il puisse le corriger.
+
+# %% Bonus
+# ## Bonus numpy
+#'
+#' Comprendre l'utilisation de `::` et `,`
+#'
+#' Créer un échequier en 3 lignes, sans compréhension de liste :
+#'
+#' ```
+#' [[0, 1, 0, 1, 0, 1, 0, 1],
+#'  [1, 0, 1, 0, 1, 0, 1, 0],
+#'  [0, 1, 0, 1, 0, 1, 0, 1],
+#'  [1, 0, 1, 0, 1, 0, 1, 0],
+#'  [0, 1, 0, 1, 0, 1, 0, 1],
+#'  [1, 0, 1, 0, 1, 0, 1, 0],
+#'  [0, 1, 0, 1, 0, 1, 0, 1],
+#'  [1, 0, 1, 0, 1, 0, 1, 0]]
+#' ```
+#'
+
+# todo
